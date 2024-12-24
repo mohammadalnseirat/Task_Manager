@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +19,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
+
+//? Routes:
+app.use("/api/v1/users", userRoutes);
 
 app.listen(PORT, () => {
   connectDB();
