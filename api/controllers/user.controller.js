@@ -46,3 +46,39 @@ export const registerUser = async (req, res, next) => {
     next(error);
   }
 };
+
+//! 2-Function To Login User:
+export const loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(handleError(400, "Please provide email and password."));
+    }
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return next(handleError(404, "Invalid email or password."));
+    }
+    if (!user.isActive) {
+      return next(
+        handleError(
+          401,
+          "User account has been deactivated, contact the administrator"
+        )
+      );
+    }
+    const isMatchPassword = await user.matchPassword(password);
+    if (!isMatchPassword) {
+      return next(handleError(401, "Invalid password or email."));
+    }
+    if (user && isMatchPassword) {
+      createTokenAndSetCookies(user._id, res);
+      user.password = undefined;
+      res.status(200).json(user);
+    } else {
+      next(handleError(500, "Ivalid user data."));
+    }
+  } catch (error) {
+    console.log("Error logging in user", error.message);
+    next(error);
+  }
+};

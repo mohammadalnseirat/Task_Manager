@@ -30,7 +30,7 @@ app.listen(PORT, () => {
 
 //? MiddleWare For Error Handling:
 app.use((err, req, res, next) => {
-  const statusCode = err.status || 500;
+  const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   res.status(statusCode).json({
     success: false,
