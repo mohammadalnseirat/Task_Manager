@@ -15,3 +15,29 @@ export const getTeamList = async (req, res, next) => {
     next(error);
   }
 };
+
+//! 2- Function to get Notifications:
+export const getNotificationsList = async (req, res, next) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(
+        handleError(
+          404,
+          "User doest not exist, Please Login To get the notifications."
+        )
+      );
+    }
+    const notifications = await Notification.find({
+      team: userId,
+      isRead: { $nin: [userId] },
+    })
+      .sort({ createdAt: -1 })
+      .populate("task", "title");
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.log("Error getting notifications", error.message);
+    next(error);
+  }
+};
