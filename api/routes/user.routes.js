@@ -1,13 +1,12 @@
 import express from "express";
 import {
-  loginUser,
-  registerUser,
-  logoutUser,
-} from "../controllers/user.controller.js";
+  isAdminRoute,
+  protectedRoute,
+} from "../middlewares/auth.middleware.js";
+import { getTeamList } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/log-out", logoutUser);
+router.get("/get-team", protectedRoute, isAdminRoute, getTeamList);
+
 export default router;
